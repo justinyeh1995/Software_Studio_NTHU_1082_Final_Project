@@ -51,7 +51,7 @@ const pr =
   })
   .then(()=> {
     //console.log("log success!")
-    _page.render('Home2.png')
+    //_page.render('Home2.png')
 
   })
   .then(()=>{

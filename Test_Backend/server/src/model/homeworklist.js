@@ -11,7 +11,7 @@ const article = [];
 const homeworklink = [];
 const title = [];
 const homeworkPack = [];
-
+var j = 0;
 const pr =
    phantom
   .create()
@@ -73,36 +73,23 @@ const pr =
         //console.log(title[i] +" "+homeworklink[i]);
     })
   })
-  .then(()=>{
-    var len = homeworklink.length
-    console.log(len)
-    let promise = Promise.resolve();
-    for(var i = 0; i < len; i++) {
-       promise = promise.then(()=>{
-         _page.open(homeworklink[i])
-
-     })
-    }
+  // .then( () => {openlink(_page)}
+  //   )
+  .then(()=> {
+    var url = homeworklink[0]
+    return _page.open(url)
   })
-  .then(()=>{
-      _page.render("Hwlist2.png")
+  .then(()=> {
+    return _page.property('content')
   })
-  // .then(()=> {
-  //   var url = homeworklink[0]
-  //   return _page.open(url)
-  // })
-  // .then(()=> {
-  //   return _page.property('content')
-  // })
-  // .then((content)=> {
-  //       //_page.render('Hw6.png')
-  //       var $ = cheerio.load(content)
-  //       article[0] = $('ol > li').text();
-  //       console.log(article[0])
-  //       // homeworkPack[0] = {"title": title[0], "Content": article[0]};
-  //       // console.log(homeworkPack[0])
-  // })
-
+  .then((content)=> {
+        //_page.render('Hw6.png')
+        var $ = cheerio.load(content)
+        article[0] = $('ol > li').text();
+        //console.log(article[0])
+        homeworkPack[0] = {"title": title[0], "Content": article[0]};
+        console.log(homeworkPack[0])
+  })
   .then(()=> {
     const off = _page.off('onLoadFinished');
     return Promise.all([off])
@@ -121,6 +108,22 @@ const pr =
     console.log("Login Finish");
   })
 
+  function openlink(_page){
+
+    setTimeout(function(){
+        _page.open(homeworklink[j], function(status) {
+            if (status == 'success') {
+                    _page.render('example' + j + '.png');
+            }
+            j++;
+            if(j <= 4){
+                openlink(_page);
+            }else{
+               phantom.exit();
+            }
+        });
+      },2000);
+    }
 
 async function getHomework() {
   await pr;

@@ -10,7 +10,7 @@ router.use(bodyParser.json());
 
 router.get('/login', function(req, res, next) {
     ilmsModel.getResult().then(courselist => {
-        //console.log(courselist);
+        console.log(courselist);
         res.json(courselist);
     }).catch(next);
 });
