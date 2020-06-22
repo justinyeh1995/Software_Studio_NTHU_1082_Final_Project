@@ -7,6 +7,8 @@ import { MonoText } from '../components/StyledText';
 import * as superagent from 'superagent';
 import phantom from '../src/phantom';
 import iLMS from '../src/iLMS';
+import axios from 'axios';
+
 export default function HomeScreen() {
   return (
     <View style={styles.container}>
@@ -42,6 +44,7 @@ export default function HomeScreen() {
 
         <View>
           <Button onPress={handleLogin} title="Login"></Button>
+          <Button onPress={handlePress} title="Course Announcement"></Button>
         </View>
 
         <View style={styles.helpContainer}>
@@ -67,9 +70,21 @@ HomeScreen.navigationOptions = {
 };
 
 function handleLogin(){
-  
-  iLMS.post()
-  
+
+  iLMS.get()
+  .then(
+     data => { 
+      console.log(data)
+     } 
+  )
+}
+
+function handlePress() {
+  iLMS.test()
+  .then(
+    data => {console.log(data)}
+    
+  )
 }
 
 function DevelopmentModeNotice() {
