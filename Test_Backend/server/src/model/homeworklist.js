@@ -9,8 +9,9 @@ const username = "1073007S";
 const password = "21960402";
 const article = [];
 const homeworklink = [];
+const homeworkID = [];
 const title = [];
-const homeworkPack = [];
+const homeworklistPack = [];
 var j = 0;
 const pr =
    phantom
@@ -65,31 +66,30 @@ const pr =
   })
   .then((content) => {
     var $ = cheerio.load(content)
-    //console.log($)
-    /* Get Hw Title*/
+    /* Get Hw Title ID*/
     $('td[align="left"]').each( function(i, elem) {
         title[i] = $(this).find('> a').text();
-        homeworklink[i] = 'https://lms.nthu.edu.tw'+$(this).find(':nth-child(2)').attr('href');
-        //console.log(title[i] +" "+homeworklink[i]);
+        //homeworklink[i] = 'https://lms.nthu.edu.tw'+$(this).find(':nth-child(2)').attr('href');
+        homeworkID[i] = $(this).find(':nth-child(2)').attr('href').match(/\d+/g).map(Number)[1]
+        //console.log(title[i] +" "+homeworkID[i]);
+        homeworklistPack[i] = {"title": title[i], "id": homeworkID[i]};
     })
   })
-  // .then( () => {openlink(_page)}
-  //   )
-  .then(()=> {
-    var url = homeworklink[0]
-    return _page.open(url)
-  })
-  .then(()=> {
-    return _page.property('content')
-  })
-  .then((content)=> {
-        //_page.render('Hw6.png')
-        var $ = cheerio.load(content)
-        article[0] = $('ol > li').text();
-        //console.log(article[0])
-        homeworkPack[0] = {"title": title[0], "Content": article[0]};
-        console.log(homeworkPack[0])
-  })
+  // .then(()=> {
+  //   var url = homeworklink[0]
+  //   return _page.open(url)
+  // })
+  // .then(()=> {
+  //   return _page.property('content')
+  // })
+  // .then((content)=> {
+  //       //_page.render('Hw6.png')
+  //       var $ = cheerio.load(content)
+  //       article[0] = $('ol > li').text();
+  //       //console.log(article[0])
+  //       homeworkPack[0] = {"title": title[0], "Content": article[0]};
+  //       console.log(homeworkPack[0])
+  // })
   .then(()=> {
     const off = _page.off('onLoadFinished');
     return Promise.all([off])
@@ -108,32 +108,14 @@ const pr =
     console.log("Login Finish");
   })
 
-  function openlink(_page){
-
-    setTimeout(function(){
-        _page.open(homeworklink[j], function(status) {
-            if (status == 'success') {
-                    _page.render('example' + j + '.png');
-            }
-            j++;
-            if(j <= 4){
-                openlink(_page);
-            }else{
-               phantom.exit();
-            }
-        });
-      },2000);
-    }
-
-async function getHomework() {
+  
+async function getHomeworkList() {
   await pr;
-  // await course;
   return {
-    //Course: [...courseList],
-    Homework: [...homeworkPack]
+    HomeworkList: [...homeworkPack]
   }
 }
 
 module.exports = {
-  getHomework
+  getHomeworkList
 }

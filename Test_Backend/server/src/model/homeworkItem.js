@@ -7,11 +7,10 @@ var axios = require('axios')
 var instance, _page
 const username = "1073007S";
 const password = "21960402";
-const article = [];
-const homeworklink = [];
+const attachment = [];
 const title = [];
 const homeworkPack = [];
-var j = 0;
+
 const pr =
    phantom
   .create()
@@ -63,11 +62,15 @@ const pr =
     return _page.property('content')
   })
   .then((content)=> {
-        //_page.render('Hw6.png')
+       
         var $ = cheerio.load(content)
-        article[0] = $('ol > li').text();
-        //console.log(article[0])
-        homeworkPack[0] = { "Content": article[0]};
+        $('.infoTable > table > tbody > :nth-child(7)').find('a').each( function(i, elem) { 
+          var link = 'https://lms.nthu.edu.tw'+$(this).attr("href");
+          var attachname = $(this).text();
+          attachment.push({"attachname": attachname, "link": link})
+        })
+        var article = $('ol > li').text();
+        homeworkPack[0] = { "Content": article, "attachment": attachment};
         console.log(homeworkPack[0])
   })
   .then(()=> {
@@ -91,9 +94,7 @@ const pr =
 
 async function getHomeworkItem() {
   await pr;
-  // await course;
   return {
-    //Course: [...courseList],
     Homework: [...homeworkPack]
   }
 }

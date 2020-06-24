@@ -79,7 +79,6 @@ const pr =
   .then(()=> {
     const off = _page.off('onLoadFinished');
     return Promise.all([off])
-    //console.log(forumPack);
     instance.exit()
   })
   .catch(e => {
@@ -99,7 +98,7 @@ const pr =
 async function getForum() {
   await pr;
   return {
-    Forum: [...forumPack]
+    ForumList: [...forumPack]
   }
 }
 
