@@ -1,8 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const ilmsModel = require('../model/ilms.js');
-const courseModel = require('../model/course.js');
+const ilmsModel = require('../model/home.js');
+const courseModel = require('../model/announcelist.js');
 const elearnModel = require('../model/elearn.js');
 const router = express.Router();
 

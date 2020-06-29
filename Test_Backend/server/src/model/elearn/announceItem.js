@@ -1,13 +1,21 @@
+/* Goal: Sign in to iLMS, eLearn, Moodle*/
 'use strict'
 var phantom = require('phantom')
 var cheerio = require('cheerio')
 var request = require('request')
+var axios = require('axios')
 var instance, _page
-const username = "1073007S";
-const password = "21960402";
-const courseList = [];
+var instance_course, _page_course
+const username = "106030029";
+const password = "83891111";
+const url = "https://elearn.nthu.edu.tw/mod/forum/discuss.php?d=1369"
 
-const pr = 
+//var announceURL;
+const announcementlist = [];
+const title = [];
+const announcePack = [];
+
+const pr =
    phantom
   .create()
   .then(ph => {
@@ -39,30 +47,37 @@ const pr =
         document.querySelector("button[class='btn-login']").click()
         // document.querySelector("input[id='loginbtn']").click()
 
-        console.log("Submitted!")
+        //console.log("Submitted!")
       },username,password)
     })
   })
   .then(()=> {
-    console.log("log success!")
-    _page.render('eLearn.png')
+    return _page.open(url)
+  })
+  .then(status => {
+      _page.render('AnnounceItem.png')
+  })
+  .then(()=> {
     return _page.property('content')
   })
   .then((content) => {
     var $ = cheerio.load(content)
-    //console.log(content)
-    /* Get Course Name*/ //$('.course-info-container > .media > .media-body > .media-heading > a ')
-    $('div[id="courses-view-in-progress"]').find('div > div > div > div > div >div >div > h4 > a').each(function(i, elem) {
-      if($(this).text() !== '成績查詢')
-        courseList[i] = $(this).text();
-    });
-    courseList.map( name => { console.log(name)})
-
-    const off = _page.off('onLoadFinished');
-    return Promise.all([off])
+    /* Get Course Announcement*/
+    var title = $('.subject').text();
+    var article =$('.no-overflow > .content > div > p').text();
+    //var attach = [];
+    announcePack.push({
+        title: title,
+        Announcement: article,
+        attach: [],
+      })
+    console.log(announcePack)
+    return announcePack;  
     }
   )
   .then(()=> {
+    const off = _page.off('onLoadFinished');
+    return Promise.all([off])
     instance.exit()
   })
   .catch(e => {
@@ -72,20 +87,20 @@ const pr =
       instance.exit()
     })
   });
- 
+
+
   Promise.all([pr]).then(()=>{
-  	console.log("Finish");
+    console.log("Login Finish");
   })
 
-  
-async function getResult() {
+
+async function getAnnounceItem() {
   await pr;
   return {
-    Course: [...courseList]
+    Announcement: [...announcePack]
   }
 }
 
-
 module.exports = {
-  getResult
+    getAnnounceItem
 }

@@ -12,6 +12,7 @@ const homeworklink = [];
 const homeworkID = [];
 const title = [];
 const homeworklistPack = [];
+const time = [];
 var j = 0;
 const pr =
    phantom
@@ -67,29 +68,33 @@ const pr =
   .then((content) => {
     var $ = cheerio.load(content)
     /* Get Hw Title ID*/
-    $('td[align="left"]').each( function(i, elem) {
-        title[i] = $(this).find('> a').text();
-        //homeworklink[i] = 'https://lms.nthu.edu.tw'+$(this).find(':nth-child(2)').attr('href');
-        homeworkID[i] = $(this).find(':nth-child(2)').attr('href').match(/\d+/g).map(Number)[1]
-        //console.log(title[i] +" "+homeworkID[i]);
-        homeworklistPack[i] = {"title": title[i], "id": homeworkID[i]};
+    // $('td[align="left"]').each( function(i, elem) {
+    //     title[i] = $(this).find('> a').text();
+    //     //homeworklink[i] = 'https://lms.nthu.edu.tw'+$(this).find(':nth-child(2)').attr('href');
+    //     homeworkID[i] = $(this).find(':nth-child(2)').attr('href')
+    //     // .match(/\d+/g).map(Number)[1]
+    //     console.log(homeworkID[i]);
+    //     homeworklistPack[i] = {"title": title[i], "id": homeworkID[i]};
+    // })
+
+    const table = $('.tableBox > .table > tbody > tr')
+    table.each(function(i, elem) {
+      title[i] = $(elem).find('td[align="left"] > a').text();
+      homeworkID[i] = $(elem).find('td[align="left"]').find(' :nth-child(2)').attr('href')
+      time[i] =  $(elem).find(':nth-child(5) > span').text();
     })
+    title.shift();
+    homeworkID.shift();
+    time.shift();
+
+    for(let i = 0; i < title.length; i++) {
+      time[i] = parseDate(time[i])
+      homeworkID[i] = homeworkID[i].match(/\d+/g).map(Number)[1]
+      homeworklistPack[i] = {"title": title[i], "id": homeworkID[i], "time": time[i]};
+    }
+
+    homeworklistPack.map( name => { console.log(name)})
   })
-  // .then(()=> {
-  //   var url = homeworklink[0]
-  //   return _page.open(url)
-  // })
-  // .then(()=> {
-  //   return _page.property('content')
-  // })
-  // .then((content)=> {
-  //       //_page.render('Hw6.png')
-  //       var $ = cheerio.load(content)
-  //       article[0] = $('ol > li').text();
-  //       //console.log(article[0])
-  //       homeworkPack[0] = {"title": title[0], "Content": article[0]};
-  //       console.log(homeworkPack[0])
-  // })
   .then(()=> {
     const off = _page.off('onLoadFinished');
     return Promise.all([off])
@@ -108,6 +113,16 @@ const pr =
     console.log("Login Finish");
   })
 
+ function parseDate(dateStr) {
+    const match = dateStr.match(/(\d+)-(\d+) (\d+):(\d+)/);
+
+    return {
+      month: match[1],
+      day: match[2],
+      hour: match[3],
+      minute: match[4],
+    };
+  }
   
 async function getHomeworkList() {
   await pr;

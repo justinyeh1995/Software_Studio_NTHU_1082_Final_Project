@@ -5,12 +5,13 @@ var cheerio = require('cheerio')
 var request = require('request')
 var axios = require('axios')
 var instance, _page
+var instance_course, _page_course
 const username = "1073007S";
 const password = "21960402";
 
-const scoretitle = [];
-const scores = [];
-const scorePack = [];
+const attachList = [];
+const title = [];
+const announcePack = [];
 
 const pr =
    phantom
@@ -48,44 +49,31 @@ const pr =
       },username,password)
     })
   })
-  .then(()=> {
-    //console.log("log success!")
-    //_page.render('Home3.png')
-
-  })
   .then(()=>{
-    return _page.open('https://lms.nthu.edu.tw/course.php?courseID=43470&f=score')
+    return _page.open('https://lms.nthu.edu.tw/course.php?courseID=43470&f=news_show&newsID=2492109')
   })
   .then(status => {
-      _page.render('materialList.png')
+      _page.render('Announcement.png')
   })
   .then(()=> {
-    // console.log(_page.property('content'))
     return _page.property('content')
   })
-  .then((content)=> {
-        console.log(content)
-        var $ = cheerio.load(content)
-        $('.header > .td').each( function(i, elem) { 
-          var scorename = $(this).text();
-          scoretitle.push(scorename)
-        })
+  .then((content) => {
+    var $ = cheerio.load(content)
 
-        $('#t1_tr0 > .td').each( function(i, elem) { 
-            var score = $(this).text();
-            scores.push(score)
-        })
-
-        for(let i = 0; i < 4; i++) {
-            scoretitle.shift();
-            scores.shift();
-        }
-
-        for(let i = 0; i < scores.length; i++) {
-            scorePack.push({"title": scoretitle[i], "score": scores[i]});
-        }
-        console.log(scorePack)
-  })
+    const title = $('.doc > .title')
+    const article = $('.article')
+    const attach = $('.attach > div > a')
+    attach.each(function(i, elem) {
+        attachList.push({"name": $(elem).text(), "downloadlink": 'https://lms.nthu.edu.tw'+$(elem).attr('href') })
+    })
+    
+    announcePack.push({"title": title.text(), "Announcement": article.text(), "attach": attachList})
+    
+    //announcePack.map( name => { console.log(name)})
+    //console.log(announcePack);
+    }
+  )
   .then(()=> {
     const off = _page.off('onLoadFinished');
     return Promise.all([off])
@@ -105,13 +93,13 @@ const pr =
   })
 
 
-async function getHomeworkItem() {
+async function getAnnounce() {
   await pr;
   return {
-    Homework: [...homeworkPack]
+    Announcement: [...announcePack]
   }
 }
 
 module.exports = {
-  getHomeworkItem
+  getAnnounce
 }

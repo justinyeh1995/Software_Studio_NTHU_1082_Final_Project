@@ -81,16 +81,16 @@ const pr =
     }
   )
   .then(()=> {
-    // const off = _page.off('onLoadFinished');
-    // return Promise.all([off])
+    const off = _page.off('onLoadFinished');
+    return Promise.all([off])
     instance.exit()
   })
   .catch(e => {
     console.log("Failed! " + e)
-    // const off = _page.off('onLoadFinished');
-    // return Promise.all([off]).then(()=>{
+    const off = _page.off('onLoadFinished');
+    return Promise.all([off]).then(()=>{
       instance.exit()
-    //})
+    })
   });
 
 
@@ -99,79 +99,9 @@ const pr =
   })
 
 
-
-// const course =
-//    phantom
-//   .create()
-//   .then(ph => {
-//     instance_course = ph
-//     return instance.createPage()
-//   })
-//   .then(page => {
-//     console.log("!")
-//     _page_course = page
-//     _page_course.setting('userAgent', "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36")
-//     _page_course.on('onConsoleMessage', true, function(msg) {
-//       console.log('msg: ' + msg)
-//     })
-//
-//     return _page_course.open('https://lms.nthu.edu.tw/course.php?courseID=43470&f=news')
-//   })
-//   .then(status => {
-//     return new Promise(function (resolve, reject) {
-//       _page_course.on('onAlert', function (msg) {
-//         reject(msg)
-//       })
-//       _page_course.on('onLoadFinished', function (status) {
-//         console.log("Status: " + status)
-//         resolve(status)
-//       })
-//     })
-//   })
-//   .then(()=> {
-//     console.log("!!")
-//     console.log("course log success!")
-//     _page_course.render('Announcement.png')
-//     return _page_course.property('content')
-//   })
-//   .then((content) => {
-//     _page_course.render('course_announcement2.png')
-//     var $ = cheerio.load(content)
-//     /* Get Course Announcement*/
-//     $('.thread').each(function(i, elem) {
-//         announcement[i] = $(this).text();
-//     });
-//     /* Get Course Title*/
-//     $('td[align="left"] > a').each(function(i, elem) {
-//         title[i] = $(this).text();
-//         announcePack[i] = {"title": title[i], "Announcement": announcement[i]}
-//     });
-//     //announcePack.map( name => { console.log(name)})
-//     console.log(announcement);
-//     }
-//   )
-//   .then(()=> {
-//     const off = _page_course.off('onLoadFinished');
-//     return Promise.all([off])
-//     instance_course.exit()
-//   })
-//   .catch(e => {
-//     console.log("Failed! " + e)
-//     const off = _page_course.off('onLoadFinished');
-//     return Promise.all([off]).then(()=>{
-//       instance_course.exit()
-//     })
-//   });
-//
-//   Promise.all([course]).then(()=>{
-//     console.log("Course Finish");
-//   })
-
 async function getAnnounce() {
   await pr;
-  // await course;
   return {
-    //Course: [...courseList],
     Announcement: [...announcePack]
   }
 }
