@@ -13,21 +13,21 @@ function login() {
     .then((res) => {
       console.log("loggining...");
       var re = /(\S+);/
-      var cookie = res.headers['set-cookie']
-      //.map((cookie) => { return cookie.match(re)[1]})
+      var cookie = res.headers['set-cookie'].map((cookie) => { return cookie.match(re)[1]})
       var cookieStr = cookie.join('; ')
-      console.log(cookieStr)
+      // console.log(cookieStr)
       var $ = cheerio.load(res.data);
       //console.log($('.loginpanel').text())
-      var token = $("#above-header > div > :nth-child(2) > form > :nth-child(1)");
-      console.log(token.attr('value'))
+      var token = $("#above-header > div > :nth-child(2) > form > :nth-child(1)").attr('value');
+      // console.log(token.attr('value'))
       return {token, cookieStr};
     })
     .then((object)=> {
-      //console.log(object)
+      console.log(object)
       const {cookieStr, token} = object;
       //return axios.post('https://elearn.nthu.edu.tw/login/index.php?username=1073007S&password=21960402&anchor=&logintoken=ITuAV7s6L9zmw2U76itNfYGCTFmyLRFF')
       // console.log(token)
+      // console.log(cookieStr)
       return axios({
         method: 'post',
         url: 'https://elearn.nthu.edu.tw/login/index.php',
@@ -62,12 +62,12 @@ function login() {
       }) 
     })
     .then( res=> { 
-      console.log(res.status)
+      // console.log(res.status)
       //console.log(res.location)
       return axios
         .get('https://elearn.nthu.edu.tw/login/index.php?testsession=21971')
     })
-    .then(res => {console.log(res.status)})
+    .then(res => {console.log()})
     // .then(() => { 
     //   return axios
     //     .get(myURL)
